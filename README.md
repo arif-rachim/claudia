@@ -179,8 +179,6 @@ MIT - Do whatever you want with this code. Sell it, break it, improve it, blame 
 
 - **Anthropic** - For making Claude, the big brother we're emulating
 - **Open WebUI** - For the backend we're too lazy to build
-- **Stack Overflow** - For 90% of the code
-- **GitHub Copilot** - For the other 10%
 - **Coffee** - The real MVP
 - **You** - For actually reading this far. You're a real one.
 
