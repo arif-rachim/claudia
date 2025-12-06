@@ -1,4 +1,4 @@
-import { useEffect, useCallback } from 'react';
+import { useEffect, useCallback, useRef } from 'react';
 import { useAppDispatch, useAppSelector } from '../store';
 import { setAppearance } from '../store/slices/settingsSlice';
 
@@ -7,13 +7,20 @@ export type Theme = 'light' | 'dark' | 'system';
 export function useTheme() {
   const dispatch = useAppDispatch();
   const { theme } = useAppSelector((state) => state.settings.appearance);
+  const isInitialMount = useRef(true);
 
   // Apply theme to document root
   useEffect(() => {
     const root = document.documentElement;
     root.setAttribute('data-theme', theme);
 
-    // Save theme to electron store
+    // Skip saving on initial mount to prevent overwriting loaded settings
+    if (isInitialMount.current) {
+      isInitialMount.current = false;
+      return;
+    }
+
+    // Save theme to electron store only after initial load
     window.electron.config.set({
       appearance: { theme },
     }).catch((error) => {
