@@ -8,7 +8,7 @@ import { useConversations } from '../../hooks/useConversations';
 import { useProjects } from '../../hooks/useProjects';
 import { useAppSelector, useAppDispatch } from '../../store';
 import { Attachment } from '../../types/message.types';
-import { clearMessages } from '../../store/slices/chatSlice';
+import { clearMessages, addMessage } from '../../store/slices/chatSlice';
 import { Conversation } from '../../types/conversation.types';
 
 export function ChatWindow() {
@@ -76,7 +76,7 @@ export function ChatWindow() {
             // This prevents clearing messages when creating a new conversation
             dispatch(clearMessages());
             conversation.messages.forEach((msg) => {
-              // Messages will be displayed from the loaded conversation
+              dispatch(addMessage(msg));
             });
           }
           loadedConversationRef.current = currentConversationId;
