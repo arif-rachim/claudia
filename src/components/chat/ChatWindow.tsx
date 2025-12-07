@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useCallback, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { ChatMessage } from './ChatMessage';
 import { StreamingMessage } from './StreamingMessage';
 import { ChatInput, ChatInputRef } from './ChatInput';
@@ -38,7 +38,7 @@ export function ChatWindow() {
     update: updateConversation,
   } = useConversations();
 
-  const { currentProjectId } = useProjects();
+  const { currentProjectId: _currentProjectId } = useProjects();
 
   const { selectedModel, baseUrl, apiKey, availableModels } = useAppSelector((state) => state.settings.api);
   const [pendingModel, setPendingModel] = useState<string | null>(null);
@@ -72,7 +72,8 @@ export function ChatWindow() {
       }
 
       loadConversation(currentConversationId, currentConversation.projectId)
-        .then((conversation: Conversation) => {
+        .then((result) => {
+          const conversation = result as Conversation;
           if (conversation && conversation.messages && conversation.messages.length > 0) {
             // Only clear and load if the conversation has existing messages
             // This prevents clearing messages when creating a new conversation

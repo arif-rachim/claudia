@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
-import { Message, Attachment, ToolCall, ToolResult } from '../../types/message.types';
+import { Message, Attachment, ToolCall } from '../../types/message.types';
 import { getOpenWebUIService } from '../../services/api/openWebUI.service';
 import { streamChatCompletion } from '../../services/api/streaming.service';
 import { ToolIntegrationService } from '../../services/mcp/tool-integration.service';
@@ -197,7 +197,7 @@ const chatSlice = createSlice({
         state.messages.push({
           id: action.payload.assistantMessageId,
           role: 'assistant',
-          content: action.payload.assistantContent,
+          content: action.payload.assistantContent || '',
           timestamp: action.payload.timestamp,
         });
       })
@@ -340,6 +340,9 @@ export const sendStreamingMessageWithTools = createAsyncThunk(
     messages.push({
       role: 'user' as const,
       content,
+      tool_calls: undefined,
+      tool_call_id: undefined,
+      name: undefined,
     });
 
     // Get available MCP tools
@@ -377,7 +380,6 @@ export const sendStreamingMessageWithTools = createAsyncThunk(
         }
 
         let assistantToolCalls: ToolCall[] = [];
-        let hasContent = false;
 
         // Stream LLM response
         await new Promise<void>((resolve, reject) => {
@@ -393,7 +395,6 @@ export const sendStreamingMessageWithTools = createAsyncThunk(
             {
               onChunk: (chunk) => {
                 if (chunk) {
-                  hasContent = true;
                   dispatch(appendStreamingContent(chunk));
                 }
               },
@@ -453,6 +454,7 @@ export const sendStreamingMessageWithTools = createAsyncThunk(
             messages.push({
               role: 'tool',
               content: result.content,
+              tool_calls: undefined,
               tool_call_id: result.tool_call_id,
               name: result.name,
             });

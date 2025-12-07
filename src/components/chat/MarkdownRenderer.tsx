@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import { useMemo, ReactNode } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
@@ -57,7 +57,7 @@ export const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content, isU
   // Default components
   const defaultComponents = {
         // Code blocks
-        code({ node, inline, className, children, ...props }) {
+        code({ node, inline, className, children, ...props }: { node?: unknown; inline?: boolean; className?: string; children?: ReactNode; [key: string]: unknown }) {
           const match = /language-(\w+)/.exec(className || '');
           const language = match ? match[1] : '';
 
@@ -103,42 +103,42 @@ export const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content, isU
           );
         },
         // Paragraphs
-        p({ children }) {
+        p({ children }: { children?: ReactNode }) {
           return <p className="mb-2 last:mb-0">{children}</p>;
         },
         // Lists
-        ul({ children }) {
+        ul({ children }: { children?: ReactNode }) {
           return <ul className="mb-2 ml-4 list-disc space-y-1">{children}</ul>;
         },
-        ol({ children }) {
+        ol({ children }: { children?: ReactNode }) {
           return <ol className="mb-2 ml-4 list-decimal space-y-1">{children}</ol>;
         },
-        li({ children }) {
+        li({ children }: { children?: ReactNode }) {
           return <li className="text-sm">{children}</li>;
         },
         // Headings
-        h1({ children }) {
+        h1({ children }: { children?: ReactNode }) {
           return (
             <h1 className={`mb-2 mt-4 text-xl font-bold first:mt-0 ${isUser ? 'text-white' : 'text-text-primary'}`}>
               {children}
             </h1>
           );
         },
-        h2({ children }) {
+        h2({ children }: { children?: ReactNode }) {
           return (
             <h2 className={`mb-2 mt-3 text-lg font-bold first:mt-0 ${isUser ? 'text-white' : 'text-text-primary'}`}>
               {children}
             </h2>
           );
         },
-        h3({ children }) {
+        h3({ children }: { children?: ReactNode }) {
           return (
             <h3 className={`mb-2 mt-3 text-base font-bold first:mt-0 ${isUser ? 'text-white' : 'text-text-primary'}`}>
               {children}
             </h3>
           );
         },
-        h4({ children }) {
+        h4({ children }: { children?: ReactNode }) {
           return (
             <h4 className={`mb-2 mt-2 text-sm font-bold first:mt-0 ${isUser ? 'text-white' : 'text-text-primary'}`}>
               {children}
@@ -146,7 +146,7 @@ export const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content, isU
           );
         },
         // Links
-        a({ href, children }) {
+        a({ href, children }: { href?: string; children?: ReactNode }) {
           return (
             <a
               href={href}
@@ -161,7 +161,7 @@ export const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content, isU
           );
         },
         // Blockquotes
-        blockquote({ children }) {
+        blockquote({ children }: { children?: ReactNode }) {
           return (
             <blockquote
               className={`my-2 border-l-4 pl-4 italic ${
@@ -175,7 +175,7 @@ export const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content, isU
           );
         },
         // Tables
-        table({ children }) {
+        table({ children }: { children?: ReactNode }) {
           return (
             <div className="my-2 overflow-x-auto">
               <table className="min-w-full divide-y divide-border">
@@ -184,20 +184,20 @@ export const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content, isU
             </div>
           );
         },
-        thead({ children }) {
+        thead({ children }: { children?: ReactNode }) {
           return (
             <thead className={isUser ? 'bg-white bg-opacity-10' : 'bg-surface'}>
               {children}
             </thead>
           );
         },
-        tbody({ children }) {
+        tbody({ children }: { children?: ReactNode }) {
           return <tbody className="divide-y divide-border">{children}</tbody>;
         },
-        tr({ children }) {
+        tr({ children }: { children?: ReactNode }) {
           return <tr>{children}</tr>;
         },
-        th({ children }) {
+        th({ children }: { children?: ReactNode }) {
           return (
             <th
               className={`px-3 py-2 text-left text-xs font-semibold ${
@@ -208,7 +208,7 @@ export const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content, isU
             </th>
           );
         },
-        td({ children }) {
+        td({ children }: { children?: ReactNode }) {
           return (
             <td
               className={`px-3 py-2 text-sm ${
@@ -230,11 +230,11 @@ export const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content, isU
           );
         },
         // Strong (bold)
-        strong({ children }) {
+        strong({ children }: { children?: ReactNode }) {
           return <strong className="font-bold">{children}</strong>;
         },
         // Emphasis (italic)
-        em({ children }) {
+        em({ children }: { children?: ReactNode }) {
           return <em className="italic">{children}</em>;
         },
   };

@@ -26,6 +26,9 @@ export function registerMCPHandlers() {
         throw new Error(`Server configuration not found: ${serverId}`);
       }
 
+      // Debug logging for env vars
+      console.log('[MCP] Starting server:', config.name, 'env vars:', Object.keys(config.env || {}));
+
       await manager.startServer(config);
       return { success: true };
     } catch (error) {
@@ -152,6 +155,20 @@ export function registerMCPHandlers() {
       if (!config.id || !config.name || !config.command) {
         throw new Error('Invalid server configuration: missing required fields');
       }
+
+      // Normalize env vars - ensure all values are strings
+      if (config.env && typeof config.env === 'object') {
+        const normalizedEnv: Record<string, string> = {};
+        for (const [key, value] of Object.entries(config.env)) {
+          if (key && key.trim()) {
+            normalizedEnv[key.trim()] = String(value ?? '');
+          }
+        }
+        config.env = Object.keys(normalizedEnv).length > 0 ? normalizedEnv : undefined;
+      }
+
+      // Debug logging for env vars
+      console.log('[MCP] Saving config:', config.name, 'env vars:', Object.keys(config.env || {}));
 
       // Get existing servers
       const servers = store.get('mcp.servers', {}) as Record<string, MCPServerConfig>;

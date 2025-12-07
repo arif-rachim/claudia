@@ -1,4 +1,3 @@
-import React from 'react';
 import { useAppSelector, useAppDispatch } from '../../store';
 import { setSettingsOpen } from '../../store/slices/uiSlice';
 import { SettingsPanel } from '../settings/SettingsPanel';

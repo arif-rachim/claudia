@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { MCPServerConfig } from '../../types/mcp.types';
 import { Modal } from '../common/Modal';
 import { Button } from '../common/Button';

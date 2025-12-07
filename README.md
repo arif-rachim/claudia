@@ -1,6 +1,6 @@
 # Claudia - Claude's Sassier Sister 💁‍♀️
 
-> "Why pay for Claude Desktop when you can build your own? Meet Claudia - she does it her way." - Ancient Developer Proverb
+> "Why use Claude Desktop when you can build your own? Meet Claudia - she does it her way." - Ancient Developer Proverb
 
 Meet Claudia - she's basically Claude's rebellious younger sister who decided to do things her own way. A Windows desktop application that's Claude Desktop but with more personality, more bugs, and 100% more attitude. Built with Electron because she hates RAM and loves living dangerously.
 

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useAppSelector, useAppDispatch } from '../../store';
 import {
   loadMCPServers,
@@ -10,7 +10,6 @@ import {
   setServerTools,
   setServerError,
   saveMCPServer,
-  rebuildAvailableTools,
   syncAllServerTools,
 } from '../../store/slices/mcpSlice';
 import { MCPServerConfig } from '../../types/mcp.types';

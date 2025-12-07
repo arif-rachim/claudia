@@ -14,7 +14,9 @@
       "Bash(copy \"c:\\Workspace\\Claude\\claudia\\src\\assets\\icons\\Claudio_icon.ico\" \"c:\\Workspace\\Claude\\claudia\\build\\icon.ico\" /Y)",
       "Bash(dir \"c:\\Workspace\\Claude\\claudia\")",
       "Bash(dir \"c:\\Workspace\\Claude\\claudia\\src\" -s -Recurse)",
-      "Bash(npm run type-check:*)"
+      "Bash(npm run type-check:*)",
+      "Bash(npx tsc:*)",
+      "Bash(npm run build:*)"
     ],
     "deny": [],
     "ask": []

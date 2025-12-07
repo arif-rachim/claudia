@@ -6,7 +6,6 @@ import {
   CreateConversationParams,
   UpdateConversationParams,
 } from '../../types/conversation.types';
-import { Message } from '../../types/message.types';
 import { v4 as uuidv4 } from 'uuid';
 
 const initialState: ConversationState = {

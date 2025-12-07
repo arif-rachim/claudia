@@ -1,4 +1,3 @@
-import React from 'react';
 import { PluginConfig, PluginStatus } from '../../types/plugin.types';
 
 interface PluginCardProps {

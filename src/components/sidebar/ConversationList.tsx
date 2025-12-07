@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ConversationItem } from './ConversationItem';
 import { ProjectSelector } from './ProjectSelector';
 import { Button } from '../common/Button';

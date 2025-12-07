@@ -9,13 +9,8 @@ import {
 
 export class OpenWebUIService {
   private axiosInstance: AxiosInstance;
-  private baseUrl: string;
-  private apiKey: string;
 
   constructor(baseUrl: string, apiKey: string) {
-    this.baseUrl = baseUrl;
-    this.apiKey = apiKey;
-
     this.axiosInstance = axios.create({
       baseURL: baseUrl,
       headers: {
@@ -30,9 +25,6 @@ export class OpenWebUIService {
    * Update the API configuration
    */
   updateConfig(baseUrl: string, apiKey: string): void {
-    this.baseUrl = baseUrl;
-    this.apiKey = apiKey;
-
     this.axiosInstance = axios.create({
       baseURL: baseUrl,
       headers: {

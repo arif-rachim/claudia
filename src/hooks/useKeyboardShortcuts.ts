@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useAppDispatch } from '../store';
-import { setSettingsOpen, setSidebarOpen } from '../store/slices/uiSlice';
+import { setSettingsOpen, toggleSidebar } from '../store/slices/uiSlice';
 import { useConversations } from './useConversations';
 
 export function useKeyboardShortcuts() {
@@ -21,7 +21,7 @@ export function useKeyboardShortcuts() {
       // Ctrl/Cmd + B: Toggle sidebar
       if (modifier && event.key === 'b') {
         event.preventDefault();
-        dispatch(setSidebarOpen());
+        dispatch(toggleSidebar());
       }
 
       // Ctrl/Cmd + N: New conversation

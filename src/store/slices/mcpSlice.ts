@@ -5,7 +5,6 @@ import {
   MCPServerStatus,
   MCPTool,
 } from '../../types/mcp.types';
-import { v4 as uuidv4 } from 'uuid';
 
 // ============================================================================
 // State Interface
@@ -61,7 +60,7 @@ export const loadMCPServers = createAsyncThunk(
 // Start an MCP server
 export const startMCPServer = createAsyncThunk(
   'mcp/startServer',
-  async (serverId: string, { getState, dispatch, rejectWithValue }) => {
+  async (serverId: string, { dispatch, rejectWithValue }) => {
     try {
       const response = await window.electron.mcp.startServer(serverId);
       if (!response.success) {

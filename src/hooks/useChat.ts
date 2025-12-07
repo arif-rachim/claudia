@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import { useAppDispatch, useAppSelector } from '../store';
-import { sendMessage, sendStreamingMessage, sendStreamingMessageWithTools, clearMessages, abortStreaming } from '../store/slices/chatSlice';
+import { sendMessage, sendStreamingMessageWithTools, clearMessages, abortStreaming } from '../store/slices/chatSlice';
 import { Attachment } from '../types/message.types';
 
 export function useChat() {

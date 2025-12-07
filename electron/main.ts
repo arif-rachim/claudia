@@ -14,9 +14,6 @@ import {
 
 let mainWindow: BrowserWindow | null = null;
 
-// Development mode check
-const isDevelopment = process.env.NODE_ENV !== 'production';
-
 function createMenu() {
   const template: any[] = [
     {
@@ -105,10 +102,8 @@ function createWindow() {
     height: 800,
   }) as { width: number; height: number; x?: number; y?: number };
 
-  // Get icon path - works for both dev and production
-  const iconPath = isDevelopment
-    ? path.join(__dirname, '..', 'build', 'icon.ico')
-    : path.join(__dirname, '..', 'build', 'icon.ico');
+  // Get icon path
+  const iconPath = path.join(__dirname, '..', 'build', 'icon.ico');
 
   mainWindow = new BrowserWindow({
     width: windowState.width,
@@ -144,12 +139,13 @@ function createWindow() {
   setPluginMainWindow(mainWindow);
 
   // Load the app
-  if (isDevelopment) {
-    mainWindow.loadURL('http://localhost:5173');
-    // Open DevTools in development
-    mainWindow.webContents.openDevTools();
-  } else {
+  if (app.isPackaged) {
+    // Production: load from packaged files
     mainWindow.loadFile(path.join(__dirname, '../dist/index.html'));
+  } else {
+    // Development: load from vite dev server
+    mainWindow.loadURL('http://localhost:5173');
+    mainWindow.webContents.openDevTools();
   }
 
   mainWindow.on('closed', () => {

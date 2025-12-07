@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { ToolCall, ToolResult } from '../../types/message.types';
 import { ToolIntegrationService } from '../../services/mcp/tool-integration.service';
 

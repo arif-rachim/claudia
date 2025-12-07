@@ -1,4 +1,3 @@
-import React from 'react';
 import { useTheme, Theme } from '../../hooks/useTheme';
 
 export function ThemeSettings() {

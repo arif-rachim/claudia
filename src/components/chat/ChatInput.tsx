@@ -109,9 +109,8 @@ export const ChatInput = forwardRef<ChatInputRef, ChatInputProps>(({
   return (
     <div
       {...getRootProps()}
-      className={`border-t border-border bg-surface p-4 ${
-        isDragActive ? 'bg-accent bg-opacity-10' : ''
-      }`}
+      className={`border-t border-border bg-surface p-4 ${isDragActive ? 'bg-accent bg-opacity-10' : ''
+        }`}
     >
       <input {...getInputProps()} />
 

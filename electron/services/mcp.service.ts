@@ -90,11 +90,33 @@ export class MCPServerInstance extends EventEmitter {
     this.emit('statusChanged', this._status);
 
     try {
+      // Debug logging for spawn configuration
+      console.log(`[MCP] ${this.config.name} spawn config:`, {
+        command: this.config.command,
+        args: this.config.args,
+        envKeys: Object.keys(this.config.env || {}),
+      });
+
+      // Determine if shell is needed (Windows + common npm/script commands)
+      const isWindows = process.platform === 'win32';
+      const shellCommands = ['npx', 'npm', 'node', 'python', 'py', 'uvx', 'uv'];
+      const needsShell = isWindows && shellCommands.some(cmd =>
+        this.config.command.toLowerCase() === cmd ||
+        this.config.command.toLowerCase() === `${cmd}.cmd`
+      );
+
+      // Ensure env is always a valid object
+      const mergedEnv = {
+        ...process.env,
+        ...(this.config.env || {}),
+      };
+
       // Spawn process
       this.process = spawn(this.config.command, this.config.args, {
         stdio: ['pipe', 'pipe', 'pipe'],
-        env: { ...process.env, ...this.config.env },
-        shell: false,
+        env: mergedEnv,
+        shell: needsShell,
+        windowsHide: true,
       });
 
       this._pid = this.process.pid;

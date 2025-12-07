@@ -53,7 +53,7 @@ export function CompactModelSelector({
 
   const isModelAvailable = models.includes(value);
   const displayName = abbreviateModelName(value);
-  const truncatedName = truncateModelName(displayName, 15);
+  const truncatedName = truncateModelName(displayName, 20);
 
   return (
     <div className="relative" onKeyDown={handleKeyDown}>
@@ -62,10 +62,9 @@ export function CompactModelSelector({
         type="button"
         onClick={() => !disabled && setIsOpen(!isOpen)}
         disabled={disabled}
-        className={`flex items-center gap-1.5 rounded border border-border bg-background px-3 py-2 text-sm text-text-primary transition-colors hover:border-accent focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent disabled:cursor-not-allowed disabled:opacity-50 ${
-          !isModelAvailable ? 'border-warning text-warning' : ''
-        }`}
-        style={{ minWidth: '100px', maxWidth: '120px' }}
+        className={`flex items-center gap-1.5 rounded border border-border bg-background px-3 py-2 text-sm text-text-primary transition-colors hover:border-accent focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent disabled:cursor-not-allowed disabled:opacity-50 ${!isModelAvailable ? 'border-warning text-warning' : ''
+          }`}
+        style={{ minWidth: '140px', maxWidth: '180px' }}
         title={isModelAvailable ? displayName : `${displayName} (unavailable)`}
         aria-label="Select model"
         aria-haspopup="listbox"
@@ -102,9 +101,8 @@ export function CompactModelSelector({
                     key={model}
                     type="button"
                     onClick={() => handleSelectModel(model)}
-                    className={`flex w-full items-center justify-between rounded px-3 py-2 text-left text-sm transition-colors hover:bg-background ${
-                      isSelected ? 'bg-background text-accent' : 'text-text-primary'
-                    }`}
+                    className={`flex w-full items-center justify-between rounded px-3 py-2 text-left text-sm transition-colors hover:bg-background ${isSelected ? 'bg-background text-accent' : 'text-text-primary'
+                      }`}
                     role="option"
                     aria-selected={isSelected}
                   >
