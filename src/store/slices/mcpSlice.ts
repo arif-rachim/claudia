@@ -301,6 +301,8 @@ const mcpSlice = createSlice({
       state,
       action: PayloadAction<{ id: string; status: MCPServerStatus; error?: string }>
     ) => {
+      const previousStatus = state.serverStates[action.payload.id]?.status;
+
       if (!state.serverStates[action.payload.id]) {
         // Initialize server state if it doesn't exist
         const config = state.servers[action.payload.id];
@@ -331,15 +333,30 @@ const mcpSlice = createSlice({
         }
         rebuildAvailableToolsHelper(state);
       }
+
+      // FIX: If server just became ready, rebuild available tools
+      // This handles the race condition where tools arrive before status changes to 'ready'
+      if (action.payload.status === 'ready' && previousStatus !== 'ready') {
+        console.log(`[Redux mcpSlice] Server ${action.payload.id} became ready, rebuilding tools`);
+        rebuildAvailableToolsHelper(state);
+      }
     },
 
     setServerTools: (
       state,
       action: PayloadAction<{ id: string; tools: MCPTool[] }>
     ) => {
+      console.log('[Redux mcpSlice] setServerTools called:', {
+        serverId: action.payload.id,
+        toolCount: action.payload.tools.length,
+        toolNames: action.payload.tools.map(t => t.name)
+      });
       if (state.serverStates[action.payload.id]) {
         state.serverStates[action.payload.id].tools = action.payload.tools;
         rebuildAvailableToolsHelper(state);
+        console.log('[Redux mcpSlice] After rebuild, availableTools:', state.availableTools.length);
+      } else {
+        console.warn('[Redux mcpSlice] Server state not found for:', action.payload.id);
       }
     },
 
@@ -452,10 +469,16 @@ const mcpSlice = createSlice({
 // ============================================================================
 
 function rebuildAvailableToolsHelper(state: MCPState) {
+  console.log('[Redux mcpSlice] rebuildAvailableToolsHelper called');
   const tools: MCPTool[] = [];
   const seenToolNames = new Set<string>();
 
   for (const [serverId, serverState] of Object.entries(state.serverStates)) {
+    console.log(`[Redux mcpSlice] Checking server ${serverId}:`, {
+      status: serverState.status,
+      toolCount: serverState.tools.length,
+      toolNames: serverState.tools.map(t => t.name)
+    });
     if (serverState.status === 'ready' && serverState.tools.length > 0) {
       for (const tool of serverState.tools) {
         // Avoid duplicate tool names (first server wins)

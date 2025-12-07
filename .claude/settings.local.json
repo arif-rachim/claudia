@@ -16,7 +16,8 @@
       "Bash(dir \"c:\\Workspace\\Claude\\claudia\\src\" -s -Recurse)",
       "Bash(npm run type-check:*)",
       "Bash(npx tsc:*)",
-      "Bash(npm run build:*)"
+      "Bash(npm run build:*)",
+      "Bash(dir \"c:\\Workspace\\Claude\\claudia\\electron\")"
     ],
     "deny": [],
     "ask": []

@@ -284,6 +284,11 @@ export function registerMCPHandlers() {
 
   // Forward tool updates to renderer
   manager.on('serverToolsUpdated', (event: any) => {
+    console.log('[MCP Handler] Forwarding toolsUpdated event to renderer:', {
+      serverId: event.serverId,
+      toolCount: event.tools?.length || 0,
+      toolNames: event.tools?.map((t: any) => t.name) || []
+    });
     if (mainWindow) {
       mainWindow.webContents.send('mcp:server:toolsUpdated', event);
     }

@@ -230,12 +230,14 @@ export class MCPServerInstance extends EventEmitter {
       )) as InitializeResponse['result'];
 
       this._capabilities = initResponse.capabilities;
+      console.log(`[MCP Server ${this.id}] Capabilities:`, JSON.stringify(this._capabilities, null, 2));
 
       // Step 2: Send initialized notification
       this.sendNotification('notifications/initialized');
 
       // Step 3: List tools if supported
       if (this._capabilities.tools) {
+        console.log(`[MCP Server ${this.id}] Tools capability supported, fetching tools...`);
         const toolsRequest: ToolsListRequest = {
           jsonrpc: '2.0',
           id: this.getNextRequestId(),
@@ -247,7 +249,10 @@ export class MCPServerInstance extends EventEmitter {
         )) as ToolsListResponse['result'];
 
         this._tools = toolsResponse.tools;
+        console.log(`[MCP Server ${this.id}] Received ${this._tools.length} tools:`, this._tools.map(t => t.name));
         this.emit('toolsUpdated', this._tools);
+      } else {
+        console.warn(`[MCP Server ${this.id}] Server does not support tools capability!`);
       }
 
       // Successfully initialized
