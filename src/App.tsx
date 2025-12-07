@@ -6,10 +6,29 @@ import { useConversations } from './hooks/useConversations';
 import { useAppDispatch } from './store';
 import { setApiConfig, setAppearance, setPreferences } from './store/slices/settingsSlice';
 import { setSettingsOpen, toggleSidebar } from './store/slices/uiSlice';
+import { discoverPlugins, loadPluginConfigs, refreshActivePlugins } from './store/slices/pluginSlice';
 
 function App() {
   const dispatch = useAppDispatch();
   const { create: createConversation } = useConversations();
+
+  // Initialize plugins on app start (runs once on mount)
+  useEffect(() => {
+    const initializePlugins = async () => {
+      try {
+        console.log('[App] Initializing plugins...');
+        await dispatch(loadPluginConfigs());
+        await dispatch(discoverPlugins());
+        await dispatch(refreshActivePlugins());
+        console.log('[App] Plugins initialized');
+      } catch (error) {
+        console.error('[App] Failed to initialize plugins:', error);
+      }
+    };
+
+    initializePlugins();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Load settings from electron store on app start
   useEffect(() => {

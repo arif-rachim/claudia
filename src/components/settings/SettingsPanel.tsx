@@ -4,13 +4,14 @@ import { Button } from '../common/Button';
 import { ApiSettings } from './ApiSettings';
 import { MCPSettings } from './MCPSettings';
 import { ThemeSettings } from './ThemeSettings';
+import { PluginSettings } from './PluginSettings';
 import { useAppSelector, useAppDispatch } from '../../store';
 import { setSettingsOpen } from '../../store/slices/uiSlice';
 
 export function SettingsPanel() {
   const dispatch = useAppDispatch();
   const { settingsOpen } = useAppSelector((state) => state.ui);
-  const [activeTab, setActiveTab] = useState<'api' | 'mcp' | 'appearance' | 'preferences'>('api');
+  const [activeTab, setActiveTab] = useState<'api' | 'mcp' | 'plugins' | 'appearance' | 'preferences'>('api');
 
   const handleClose = () => {
     dispatch(setSettingsOpen(false));
@@ -19,6 +20,7 @@ export function SettingsPanel() {
   const tabs = [
     { id: 'api' as const, label: 'API Configuration' },
     { id: 'mcp' as const, label: 'MCP Servers' },
+    { id: 'plugins' as const, label: 'Plugins' },
     { id: 'appearance' as const, label: 'Appearance' },
     { id: 'preferences' as const, label: 'Preferences' },
   ];
@@ -61,6 +63,7 @@ export function SettingsPanel() {
         <div className="flex-1 pl-6 overflow-y-auto">
           {activeTab === 'api' && <ApiSettings />}
           {activeTab === 'mcp' && <MCPSettings />}
+          {activeTab === 'plugins' && <PluginSettings />}
           {activeTab === 'appearance' && <ThemeSettings />}
           {activeTab === 'preferences' && (
             <div className="text-text-secondary">

@@ -1,6 +1,7 @@
 import Store from 'electron-store';
 import { safeStorage } from 'electron';
 import { MCPServerConfig } from '../../src/types/mcp.types';
+import { PluginConfig } from '../../src/types/plugin.types';
 
 interface StoreSchema {
   config: {
@@ -31,6 +32,11 @@ interface StoreSchema {
     servers: Record<string, MCPServerConfig>;
     lastImportDate?: string;
   };
+  plugins: {
+    configs: Record<string, PluginConfig>;
+    settings: Record<string, Record<string, unknown>>;
+    data: Record<string, Record<string, unknown>>;
+  };
 }
 
 export const store = new Store<StoreSchema>({
@@ -60,6 +66,11 @@ export const store = new Store<StoreSchema>({
     },
     mcp: {
       servers: {},
+    },
+    plugins: {
+      configs: {},
+      settings: {},
+      data: {},
     },
   },
 });

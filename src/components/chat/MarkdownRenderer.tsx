@@ -1,26 +1,61 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { oneDark, oneLight } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import { useAppSelector } from '../../store';
+import { getPluginRenderConfig } from '../../services/plugins/plugin-renderer.service';
+import { RenderContext } from '../../types/plugin.types';
+import { Message } from '../../types/message.types';
 
 interface MarkdownRendererProps {
   content: string;
   isUser?: boolean;
+  message?: Message;
 }
 
-export const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content, isUser = false }) => {
+export const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content, isUser = false, message }) => {
   const { theme } = useAppSelector((state) => state.settings.appearance);
+  const { activeExtensions, activeReplacement } = useAppSelector((state) => state.plugins);
 
   // Determine if we should use dark or light theme for code blocks
   const isDark = theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
   const codeTheme = isDark ? oneDark : oneLight;
 
-  return (
-    <ReactMarkdown
-      remarkPlugins={[remarkGfm]}
-      components={{
+  // Build render context for plugins
+  const renderContext: RenderContext = useMemo(() => ({
+    theme,
+    isDark,
+    message,
+    pluginSettings: {},
+  }), [theme, isDark, message]);
+
+  // Get plugin configuration
+  const pluginConfig = useMemo(() => getPluginRenderConfig(), [activeExtensions, activeReplacement]);
+
+  // Check if we should use a replacement renderer
+  if (pluginConfig.ReplacementRenderer && message) {
+    if (pluginConfig.canUseReplacement(message, renderContext)) {
+      const ReplacementRenderer = pluginConfig.ReplacementRenderer;
+      return (
+        <ReplacementRenderer
+          content={content}
+          isUser={isUser}
+          message={message}
+          context={renderContext}
+        />
+      );
+    }
+  }
+
+  // Apply pre-processing from plugins
+  const processedContent = pluginConfig.preProcess(content, renderContext);
+
+  // Merge remark plugins
+  const remarkPlugins = [remarkGfm, ...pluginConfig.remarkPlugins];
+
+  // Default components
+  const defaultComponents = {
         // Code blocks
         code({ node, inline, className, children, ...props }) {
           const match = /language-(\w+)/.exec(className || '');
@@ -202,9 +237,26 @@ export const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content, isU
         em({ children }) {
           return <em className="italic">{children}</em>;
         },
-      }}
+  };
+
+  // Merge default components with plugin components
+  // Plugin components override defaults
+  const mergedComponents = {
+    ...defaultComponents,
+    ...pluginConfig.components,
+  };
+
+  // Render markdown
+  const rendered = (
+    <ReactMarkdown
+      remarkPlugins={remarkPlugins}
+      rehypePlugins={pluginConfig.rehypePlugins}
+      components={mergedComponents as any}
     >
-      {content}
+      {processedContent}
     </ReactMarkdown>
   );
+
+  // Apply post-processing from plugins
+  return <>{pluginConfig.postProcess(rendered, renderContext)}</>;
 };

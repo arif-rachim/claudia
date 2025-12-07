@@ -89,6 +89,58 @@ contextBridge.exposeInMainWorld('electron', {
       return () => ipcRenderer.removeListener('mcp:server:error', callback);
     },
   },
+
+  // Plugin operations
+  plugins: {
+    // Discovery
+    discover: () => ipcRenderer.invoke('plugin:discover'),
+
+    // Loading
+    load: (pluginId: string) => ipcRenderer.invoke('plugin:load', pluginId),
+    unload: (pluginId: string) => ipcRenderer.invoke('plugin:unload', pluginId),
+    reload: (pluginId: string) => ipcRenderer.invoke('plugin:reload', pluginId),
+
+    // Enable/Disable
+    enable: (pluginId: string) => ipcRenderer.invoke('plugin:enable', pluginId),
+    disable: (pluginId: string) => ipcRenderer.invoke('plugin:disable', pluginId),
+
+    // Configuration
+    list: () => ipcRenderer.invoke('plugin:list'),
+    getConfig: (pluginId: string) => ipcRenderer.invoke('plugin:getConfig', pluginId),
+    updateConfig: (pluginId: string, updates: any) =>
+      ipcRenderer.invoke('plugin:updateConfig', pluginId, updates),
+
+    // Settings
+    getSettings: (pluginId: string) => ipcRenderer.invoke('plugin:getSettings', pluginId),
+    setSettings: (pluginId: string, settings: any) =>
+      ipcRenderer.invoke('plugin:setSettings', pluginId, settings),
+
+    // Status
+    getStatus: (pluginId: string) => ipcRenderer.invoke('plugin:getStatus', pluginId),
+    getActiveExtensions: () => ipcRenderer.invoke('plugin:getActiveExtensions'),
+    getActiveReplacement: () => ipcRenderer.invoke('plugin:getActiveReplacement'),
+
+    // Utility
+    getLocalPluginsDir: () => ipcRenderer.invoke('plugin:getLocalPluginsDir'),
+
+    // Event listeners
+    onStatusChanged: (callback: (event: any) => void) => {
+      ipcRenderer.on('plugin:statusChanged', (_event, data) => callback(data));
+      return () => ipcRenderer.removeListener('plugin:statusChanged', callback);
+    },
+    onError: (callback: (event: any) => void) => {
+      ipcRenderer.on('plugin:error', (_event, data) => callback(data));
+      return () => ipcRenderer.removeListener('plugin:error', callback);
+    },
+    onDiscovered: (callback: (event: any) => void) => {
+      ipcRenderer.on('plugin:discovered', (_event, data) => callback(data));
+      return () => ipcRenderer.removeListener('plugin:discovered', callback);
+    },
+    onChanged: (callback: (event: any) => void) => {
+      ipcRenderer.on('plugin:changed', (_event, data) => callback(data));
+      return () => ipcRenderer.removeListener('plugin:changed', callback);
+    },
+  },
 });
 
 // Type definitions for TypeScript (will create separate types file later)
@@ -139,6 +191,35 @@ export interface ElectronAPI {
     onServerStatusChanged: (callback: (event: any) => void) => () => void;
     onServerToolsUpdated: (callback: (event: any) => void) => () => void;
     onServerError: (callback: (event: any) => void) => () => void;
+  };
+  plugins: {
+    // Discovery
+    discover: () => Promise<any>;
+    // Loading
+    load: (pluginId: string) => Promise<any>;
+    unload: (pluginId: string) => Promise<any>;
+    reload: (pluginId: string) => Promise<any>;
+    // Enable/Disable
+    enable: (pluginId: string) => Promise<any>;
+    disable: (pluginId: string) => Promise<any>;
+    // Configuration
+    list: () => Promise<any>;
+    getConfig: (pluginId: string) => Promise<any>;
+    updateConfig: (pluginId: string, updates: any) => Promise<any>;
+    // Settings
+    getSettings: (pluginId: string) => Promise<any>;
+    setSettings: (pluginId: string, settings: any) => Promise<any>;
+    // Status
+    getStatus: (pluginId: string) => Promise<any>;
+    getActiveExtensions: () => Promise<any>;
+    getActiveReplacement: () => Promise<any>;
+    // Utility
+    getLocalPluginsDir: () => Promise<any>;
+    // Event listeners
+    onStatusChanged: (callback: (event: any) => void) => () => void;
+    onError: (callback: (event: any) => void) => () => void;
+    onDiscovered: (callback: (event: any) => void) => () => void;
+    onChanged: (callback: (event: any) => void) => () => void;
   };
 }
 

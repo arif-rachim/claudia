@@ -5,6 +5,12 @@ import { registerConfigHandlers } from './handlers/config.handler';
 import { registerConversationHandlers } from './handlers/conversation.handler';
 import { registerProjectHandlers } from './handlers/project.handler';
 import { registerMCPHandlers, setMainWindow, cleanupMCPServers } from './handlers/mcp.handler';
+import {
+  registerPluginHandlers,
+  setPluginMainWindow,
+  initializePluginManager,
+  cleanupPluginManager,
+} from './handlers/plugin.handler';
 
 let mainWindow: BrowserWindow | null = null;
 
@@ -134,6 +140,9 @@ function createWindow() {
   // Set main window reference for MCP handlers
   setMainWindow(mainWindow);
 
+  // Set main window reference for Plugin handlers
+  setPluginMainWindow(mainWindow);
+
   // Load the app
   if (isDevelopment) {
     mainWindow.loadURL('http://localhost:5173');
@@ -161,12 +170,16 @@ function saveWindowState() {
 }
 
 // App lifecycle
-app.whenReady().then(() => {
+app.whenReady().then(async () => {
   // Register IPC handlers
   registerConfigHandlers();
   registerConversationHandlers();
   registerProjectHandlers();
   registerMCPHandlers();
+  registerPluginHandlers();
+
+  // Initialize plugin manager
+  await initializePluginManager();
 
   // Create application menu
   createMenu();
@@ -189,10 +202,11 @@ app.on('window-all-closed', () => {
   }
 });
 
-// Clean up MCP servers before quit
+// Clean up MCP servers and plugins before quit
 app.on('before-quit', async (event) => {
   event.preventDefault();
   await cleanupMCPServers();
+  await cleanupPluginManager();
   app.exit();
 });
 
