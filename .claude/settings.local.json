@@ -19,7 +19,8 @@
       "Bash(npm run build:*)",
       "Bash(dir \"c:\\Workspace\\Claude\\claudia\\electron\")",
       "WebFetch(domain:github.com)",
-      "WebFetch(domain:raw.githubusercontent.com)"
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "Bash(npm pkg:*)"
     ],
     "deny": [],
     "ask": []

@@ -1,7 +1,6 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import { Message, Attachment, ToolCall } from '../../types/message.types';
-import { getOpenWebUIService } from '../../services/api/openWebUI.service';
-import { streamChatCompletion } from '../../services/api/streaming.service';
+import { getAPIProvider } from '../../services/api/provider.service';
 import { ToolIntegrationService } from '../../services/mcp/tool-integration.service';
 import { v4 as uuidv4 } from 'uuid';
 import type { RootState } from '../index';
@@ -42,13 +41,7 @@ export const sendMessage = createAsyncThunk(
   ) => {
     try {
       const state = getState() as any;
-      const { baseUrl, apiKey } = state.settings.api;
-
-      if (!baseUrl || !apiKey) {
-        throw new Error('Please configure API settings first');
-      }
-
-      const service = getOpenWebUIService(baseUrl, apiKey);
+      const provider = getAPIProvider();
 
       // Get all messages for context
       const messages = state.chat.messages.map((msg: Message) => ({
@@ -63,7 +56,7 @@ export const sendMessage = createAsyncThunk(
       });
 
       // Call the API
-      const response = await service.chatCompletion({
+      const response = await provider.chatCompletion({
         model,
         messages,
         stream: false,
@@ -243,11 +236,7 @@ export const sendStreamingMessage = createAsyncThunk(
     { getState, dispatch }
   ) => {
     const state = getState() as any;
-    const { baseUrl, apiKey } = state.settings.api;
-
-    if (!baseUrl || !apiKey) {
-      throw new Error('Please configure API settings first');
-    }
+    const provider = getAPIProvider();
 
     const userMessageId = uuidv4();
     const assistantMessageId = uuidv4();
@@ -279,9 +268,7 @@ export const sendStreamingMessage = createAsyncThunk(
     dispatch(setAbortController(abortController as any));
 
     return new Promise<void>((resolve, reject) => {
-      streamChatCompletion(
-        baseUrl,
-        apiKey,
+      provider.streamChatCompletion(
         {
           model,
           messages,
@@ -315,11 +302,7 @@ export const sendStreamingMessageWithTools = createAsyncThunk(
   ) => {
     const MAX_TOOL_ITERATIONS = 5;
     const state = getState() as RootState;
-    const { baseUrl, apiKey } = state.settings.api;
-
-    if (!baseUrl || !apiKey) {
-      throw new Error('Please configure API settings first');
-    }
+    const provider = getAPIProvider();
 
     const userMessageId = uuidv4();
     const assistantMessageId = uuidv4();
@@ -393,9 +376,7 @@ export const sendStreamingMessageWithTools = createAsyncThunk(
 
         // Stream LLM response
         await new Promise<void>((resolve, reject) => {
-          streamChatCompletion(
-            baseUrl,
-            apiKey,
+          provider.streamChatCompletion(
             {
               model,
               messages,
