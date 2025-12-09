@@ -172,6 +172,15 @@ const chatSlice = createSlice({
     addToolCallMessage: (state, action: PayloadAction<Message>) => {
       state.messages.push(action.payload);
     },
+    updateMessageToolResults: (
+      state,
+      action: PayloadAction<{ messageId: string; toolResults: import('../../types/message.types').ToolResult[] }>
+    ) => {
+      const message = state.messages.find((m) => m.id === action.payload.messageId);
+      if (message) {
+        message.toolResults = action.payload.toolResults;
+      }
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -223,6 +232,7 @@ export const {
   setExecutingTools,
   incrementToolIteration,
   addToolCallMessage,
+  updateMessageToolResults,
 } = chatSlice.actions;
 
 // Thunk for sending streaming message
@@ -417,10 +427,11 @@ export const sendStreamingMessageWithTools = createAsyncThunk(
         // Check if we have tool calls to execute
         if (assistantToolCalls.length > 0) {
           // Add assistant message with tool calls
+          const assistantMessageId = uuidv4();
           const assistantMessage: Message = {
-            id: uuidv4(),
+            id: assistantMessageId,
             role: 'assistant',
-            content: state.chat.streamingContent || '',
+            content: (getState() as RootState).chat.streamingContent || '',
             timestamp: new Date().toISOString(),
             toolCalls: assistantToolCalls,
           };
@@ -437,7 +448,13 @@ export const sendStreamingMessageWithTools = createAsyncThunk(
           );
           dispatch(setExecutingTools(false));
 
-          // Add tool result messages to history
+          // Update the assistant message with tool results
+          dispatch(updateMessageToolResults({
+            messageId: assistantMessageId,
+            toolResults: toolResults,
+          }));
+
+          // Add tool result messages to history for LLM context
           for (const result of toolResults) {
             const toolResultMessage: Message = {
               id: uuidv4(),
