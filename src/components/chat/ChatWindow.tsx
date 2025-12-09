@@ -60,6 +60,16 @@ export function ChatWindow() {
     }
   }, [isLoading, isStreaming, messages.length]);
 
+  // Auto-focus input when a new conversation is created (no messages yet)
+  useEffect(() => {
+    if (currentConversationId && messages.length === 0 && !isLoading && !isStreaming) {
+      // Use setTimeout to ensure the DOM is ready
+      setTimeout(() => {
+        chatInputRef.current?.focus();
+      }, 100);
+    }
+  }, [currentConversationId, messages.length, isLoading, isStreaming]);
+
   // Track if we've loaded this conversation before to avoid clearing messages on create
   const loadedConversationRef = useRef<string | null>(null);
 
